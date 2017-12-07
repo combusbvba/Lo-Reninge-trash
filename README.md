@@ -1,1 +1,1 @@
-# plugin-diksmuide-trash
+# plugin-Lo-Reninge-trash
