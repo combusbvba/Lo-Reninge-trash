@@ -113,17 +113,14 @@ def get_api_activities(sik):
     args = dict()
 
     lijstAFVAL = []
-    lijstAFVAL.append([7 , 'Grofvuil op afroep'])
-    lijstAFVAL.append([21 , 'Restafval Zone 1'])
-    lijstAFVAL.append([22 , 'Restafval Zone 2'])
+    lijstAFVAL.append([7 , 'Grofvuil - Op Aanvraag'])
+    lijstAFVAL.append([21 , 'Restafval'])
     lijstAFVAL.append([23 , 'Kerstboom'])
-    lijstAFVAL.append([27 , 'Papier en karton Zone 1'])
-    lijstAFVAL.append([37 , 'Papier en karton Zone 2'])
-    lijstAFVAL.append([28 , 'PMD Zone 1'])
-    lijstAFVAL.append([38 , 'PMD Zone 2'])
-    lijstAFVAL.append([29 , 'Snoeihout op afroep'])
+    lijstAFVAL.append([27 , 'Papier en karton'])
+    lijstAFVAL.append([28 , 'PMD'])
+    lijstAFVAL.append([29 , 'Snoeihout - Op aanvraag'])
     lijstAFVAL.append([30 , 'Textiel'])
-    lijstAFVAL.append([31 , 'Oude metalen op afroep'])
+    lijstAFVAL.append([31 , 'Oude metalen - Op aanvraag'])
     lijstAFVAL.append([32 , 'GFT'])
     lijstCompleet = [{'nr': nummers, 's': beschrijvingAfval} for nummers, beschrijvingAfval in lijstAFVAL]
 
@@ -166,23 +163,27 @@ def get_api_collections(sik, street_name, house_number, house_bus, time_from):
     for event in cal.walk('vevent'):
 
         date = event.get('dtstart')
-        summary = event.get('summary')
+        summary = event.get('summary').encode('utf-8')
         summaryID = 33
         lijst1.append(str(date.dt))
-        if str(summary)=="Grofvuil op afroep": summaryID = 7
-        if str(summary)=="Restafval Zone 1": summaryID=21
-        if str(summary)=="Restafval Zone 2": summaryID=22
-        if str(summary)=="Kerstboom": summaryID=23
-        if str(summary)=="Papier en karton Zone 1": summaryID=27
-        if str(summary)=="Papier en karton Zone 2": summaryID=37
-        if str(summary)=="PMD Zone 1": summaryID=28
-        if str(summary)=="PMD Zone 2": summaryID=38
-        if str(summary)=="Snoeihout op afroep": summaryID=29
-        if str(summary)=="Textiel": summaryID=33
-        if str(summary)=="Oude metalen op afroep": summaryID=31
-        if str(summary)=="GFT": summaryID=32
+        if summary[:8]=="Grofvuil":
+            summaryID = 7
+            summary = "Grofvuil - Op Aanvraag"
+        if summary=="Restafval": summaryID=21
+        if summary=="Kerstboom": summaryID=23
+        if summary=="Papier en karton": summaryID=27
+        if summary=="PMD": summaryID=28
+        if summary[:9]=="Snoeihout":
+            summaryID=29
+            summary = "Snoeihout - Op Aanvraag"
+        if summary=="Textiel": summaryID=33
+        if summary[:12]=="Oude metalen":
+            summaryID=31
+            summary = "Oude metalen - Op Aanvraag"
+        if summary=="GFT": summaryID=32
         lijst2.append(summaryID)
     lijstCompleet = [{'d': datum, 'a': afval} for datum, afval in zip(lijst1, lijst2)]
+    logging.info(lijstCompleet)
 
     activities = {}
     for a in get_api_activities(sik):
